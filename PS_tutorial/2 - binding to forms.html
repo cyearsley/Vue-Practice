@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Bind to forms - Growler</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link
+        href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        rel="stylesheet"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+        crossorigin="anonymous">
+
+    <style>
+        .headers {
+            font-family: 'Verdana';
+            margin: 0;
+        }
+    
+        .accent-color {
+            color: #FF6A00;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="growler">
+        appName: <input v-model="appName" type="text" placeholder="App Name?">
+        <br><br>App Name: <h3 v-text="appName"></h3>
+
+        <div style="border: 2px solid fuchsia;">
+            Use <b>accent-color</b> class: <input type="checkbox" v-model="displayAccent"><br>
+            Use <b>headers</b> class: <input type="checkbox" v-model="displayHeaders"><br>
+            <span v-bind:class="{'accent-color': displayAccent, 'headers': displayHeaders}" v-text="appName"></span><br>
+            displayAccent: {{ displayAccent }}<br>
+            displayHeaders: {{ displayHeaders }}
+    
+            <br><br>
+            <h2>OR</h2>
+            <br><br>
+    
+            Use <b>accent-color</b> class: <input type="checkbox" v-model="classIndexes" value="accent-color"><br>
+            Use <b>headers</b> class: <input type="checkbox" v-model="classIndexes" value="headers"><br>
+            <span v-bind:class="classIndexes" v-text="appName"></span><br>
+            classIndexes: {{ classIndexes }}
+        </div>
+        <br><br>
+
+        <div v-bind:style="{color: favColor}">
+            Red: <input type="radio" value="red" v-model="favColor"><br>
+            Green: <input type="radio" value="green" v-model="favColor"><br>
+            Blue: <input type="radio" value="blue" v-model="favColor"><br>
+        </div>
+        <b>Selected: <span v-bind:style="{color: favColor}" v-text="favColor"></span></b>
+        <br><br>
+
+        Favorite Icon:
+        <select v-model="favIcon" style="width: 300px; height: 2em;" value="fa fa-tree fa-2x">
+            <option value="fa fa-user-circle-o fa-2x">User</option>
+            <option value="fa fa-shower fa-2x">Shower</option>
+            <option value="fa fa-flask fa-2x">Flask</option>
+            <option value="fa fa-tree fa-2x">Tree</option>
+        </select>
+        <br>
+        Icon: <i v-bind:class="favIcon" aria-hidden="true"></i>
+        <br>
+        Selected Item: {{ favIcon }} 
+
+    </div>
+
+    <script type="text/javascript" src="https://unpkg.com/vue"></script>
+    
+    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        // NOTE: when using v-model on an input type, ALL textual input types are supported (color, data, email, text, time, url, etc.)
+        var growler = new Vue({
+            el: '#growler',
+            data: {
+                appName: 'Growler',
+                displayAccent: true,
+                displayHeaders: true,
+                classIndexes: [],
+                favColor: '',
+                favIcon: ''
+            }
+        });
+    </script>
+</body>
+</html>

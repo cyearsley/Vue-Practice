@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Growler</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" /> -->
+    <!-- <script src="main.js"></script> -->
+    <style>
+        .headers {
+            font-family: 'Verdana';
+            margin: 0;
+        }
+
+        .accent-color {
+            color: #FF6A00;
+        }
+    </style>
+</head>
+<body>
+    <div id="growler">
+        <div>
+            v-text: <span v-text="appName"></span>
+        </div>
+        <div>
+            v-once: <span v-once>{{ appName }}</span>
+        </div>
+        <div>
+            v-html: <span v-html="appName"></span>
+        </div>
+        <br />
+        <div>
+            v-bind 1: <span v-bind:style="{color: textColor, fontSize: textSize}">{{ appName }}</span>
+        </div>
+        <br />
+        <div>
+            v-bind 2: <span v-bind:style="textStyle">{{ appName }}</span> ----------- OR ----------- <span :style="textStyle">{{ appName }}</span>
+        </div>
+        <div>
+            v-bind 3: <span v-text="appName" v-bind:style="[textStyle, textType]"></span>
+        </div>
+        <br />
+
+        <div>
+            v-bind 4 <b>using classes 1</b>: <span v-bind:class="[textClass.accentColor, textClass.headers]">{{ appName }}</span>
+        </div>
+
+        <div>
+            <br />Here, the <b>applyAccent</b> is interpolating the value of applyAccent (try using <b>growler.applyAccent = false/true)</b><br />
+            v-bind 5 <b>using classes 2</b>: <span v-bind:class="{'accent-color': applyAccent}">{{ appName }}</span>
+        </div>
+    </div>
+
+    <script
+        type="text/javascript"
+        src="https://unpkg.com/vue"
+    ></script>
+
+    <script
+        type="text/javascript"
+        src="https://unpkg.com/axios/dist/axios.min.js"
+    ></script>
+
+    <script>
+        // life cycle of a view: creation (compiled here) -> mounting (creates virtual DOM) -> updating -> destroy (each stage has a before and after hook)
+        // NOTE: virtual DOM is updated in batches
+        // NOTE 2: you have to manually destroy a view by using destroy()
+
+        // Vue uses the Object.defineProperty to automatically assign Getters/Setters (happens during creating stage)
+        //  This adds change notifications and dependency tracking... making properties reactive... however, you must note the  following:
+        //      1) You can only modify  properties that are already defined.
+        //      2) You can't add properties at runtime
+        //      3) You can't remove properties at runtime
+        //  The above restrictions can act as a schema for a component
+
+        // Because Vue uses getters and setters... you can NOT inspect a component and simply view the values. To get around this you can:
+        //  1) call the getter and setter
+        //  2) install the vue-devtools for chrome
+
+        // Data changes will asynchronously update the DOM
+
+        // NOTE: data property values can NOT be native objects (Number, String, Data, Array, etc.)... You should stick with raw data
+
+        // The process of dereferencing variables using the {{ }} is called interpolation
+
+        // all baked-in Vue directives begin with "v-"... we might say something like "text directive" which is referencing "v-text"
+
+        // Directives:
+        //  1) v-text="<var>" - assigns the entire content of an element to the specified data value
+        //  2) v-once - to only update the DOM once (even if the view has children, they will only be rendered once as well)
+        //      |-> helps performance
+        //  3) v-html="<var>" - used to render html (this doesn't happen by default)
+        //  4) v-bind:<attribute> - used to bind to HTML attributes
+        //      |-> you can bind data property values to HTML attributes
+        //      |-> a SHORTCUT for this is: :<attrbiute>="stuff"
+        //  5) v-model="<var>" - This directive can be used with things like Text fields, checkboxes, radio buttons, and drop down lists
+        //      |-> changing the value on the tag, will modify the data model's value
+        //      |-> to trim whitespace use: v-model.trim="<var>" (uses JS trim function)
+        //      |-> to cast input to a number: v-model.number="<var>" (uses JS parseFloat function)
+        //      |-> to prevent automatic updating use v-model.lazy="<var>"
+        //          |-> this will only update the UI when the element looses focus
+        //      |-> you can chain modifiers like so: v-model.lazy.trim="<var>"
+        //          |-> the order does NOT matter (this may change?)
+        //  6) v-on:<event>="<function>[(param1, param2, ... , param_n, $event)]" - empowers you to attach to events
+        //      |-> the <event> accepts the same keywords as JS's baked in addEventListener function ("click", "hover", etc.)
+        //      |-> we could have used the SHORTCUT @<event>="<function>[(param1, param2, ... , param_n, $event)]"
+        //      |-> some modifiers for v-on:<event> are 
+                    //bubble up, THIS IS THE DEFAULT
+                    //"capture" down, 
+                    //"prevent" (like JS preventDefault method (so a submit button doesn't refresh the page)), i.e. <form @submit.prevent method="GET">
+                    //"stop" (like the JS stopPropogation... this stops propogation),
+                    //"self" - this modifier is only concerned with one element... the target
+                    //"once" - this modifier is used when you want to run an event once and only once
+        //      |-> there are also key press modifiers that could be used like: <input type="search" v-on:keyup.enter="<function>">, these are:
+        //          // "enter", "tab", "delete", "esc", "space", "up", "down", "left", "right", "alt", "ctrl", "meta", "shift"
+        //              |
+        //              |-> to use "alt", "ctrl", "meta", and "shift", you will have to do something like:
+        //                  // <input type="search" v-model.trim="query" v-on:keypress.enter.prevent="<function>" v-on:keyup.ctrl.enter="<function>">
+        //
+        //      |-> for mouse events use: v-on:(mousedown|mouseup).(left|right|middle)="<function>"
+        //          // you can prevent a context menu with something like: v-on:contextmenu.prevent="<function>"
+
+        var growler = new Vue({
+            el: '#growler',
+            data: {
+                appName: 'Growler',
+                textColor: 'black',
+                textSize: '1em',
+                textStyle: {
+                    color: 'green',
+                    fontWeight: 'bold'
+                },
+                textType: {
+                    fontFamily: 'Verdana'
+                },
+                textClass: {
+                    accentColor: 'accent-color',
+                    headers: 'headers'
+                },
+                applyAccent: true
+            }
+        });
+    </script>
+</body>
+</html>
