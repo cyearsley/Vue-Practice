@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Filters, Computed Props, and watchers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .can-connect {
+            color: green;
+        }
+
+        .cannot-connect {
+            color: red;
+        }
+
+        .li-item {
+            width: 150px;
+            height: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div id="growler">
+        <div v-cloak>
+            To test the <b>watch</b> method for <b>favDrink</b>, in the console type: <b>growler.favDrink = "NEW VALUE!";</b><br><br>
+            <h2>Buy drinks!</h2>
+            <i style="font-size: 0.75em">When buying drinks, it will update the <b>shoppingCart</b> with <b>deep: true</b></i><br>
+            <ul>
+                <li v-for="item in shopItems" class="li-item">
+                    <span>{{ item.drink | convertDrink }}</span> - <button v-on:click="buyDrink(item)" style="float: right;">${{ item.cost }}</button>
+                </li>
+            </ul><br>
+            Sub Total: {{ shoppingCart.subTotal }}
+            <h3>Shopping cart:</h3>
+            <ul>
+                <li v-for="item in shoppingCart.items" class="li-item">
+                    {{ item.drink }} - <button v-on:click="removeDrink(item)" style="color: red; float: right;">-${{ item.cost }}</button>
+                </li>
+            </ul>
+            <br><br>
+            <div style="font-size: 1.5em">Can Connect: <span v-bind:class="getConnect === 'Yes' ? 'can-connect' : 'cannot-connect'">&#9827; ({{ canConnect }})</span></div>
+            <input type="text" v-model="testUrl"> <span v-show="testUrl === 'http://www.ecofic.com/'"><i style="font-size: 0.75em">author of the course I am following</i></span><br><br>
+            <button v-on:click="updateURL">Update URL</button><br>
+            <i style="font-size: 0.75em">Notice how the value of <b>canConnect</b> isn't true or false, but <b>Yes</b> or <b>No</b></i><br>
+            <i style="font-size: 0.75em">NOTE: the <b>computed</b> method only executes during <b>interpolation</b></i><br>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://unpkg.com/vue"></script>
+    
+    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        var growler = new Vue({
+            el: '#growler',
+            data: {
+                favDrink: 'Tea',
+                shoppingCart: {
+                    items: [],
+                    subTotal: 0.00
+                },
+                shopItems: [
+                    {
+                        drink: 'Lemonade',
+                        cost: 3.13
+                    },
+                    {
+                        drink: 'Water',
+                        cost: 1.50
+                    },
+                    {
+                        drink: 'Tea',
+                        cost: 2.45
+                    },
+                    {
+                        drink: 'Coffee',
+                        cost: 4.87
+                    },
+                    {
+                        drink: 'Juice',
+                        cost: 3.64
+                    },
+                    {
+                        drink: 'Beer',
+                        cost: 6.73
+                    },
+                    {
+                        drink: 'Wine',
+                        cost: 8.15
+                    },
+                    {
+                        drink: 'Milk',
+                        cost: 4.48
+                    },
+                    {
+                        drink: 'Soda',
+                        cost: 1.97
+                    }
+                ],
+                canConnect: false,
+                testUrl: 'http://www.ecofic.com/' // author of the course I am following
+            },
+            watch: {
+                favDrink: function(newVal, oldVal) {
+                    console.log("You change the favDrink value from \"" + oldVal + "\" to \"" + newVal + "\"");
+                },
+                shoppingCart: {
+                    handler: function (newVal, oldVal) {
+                        this.shoppingCart.subTotal = this.shoppingCart.items.reduce(function (acc, item) {
+                            return acc + item.cost;
+                        }, 0);
+                    },
+                    deep: true // only use this when you need to (this can affect performance)
+                }
+            },
+            computed: {
+                // you could have also used: getConnect: function () { ... }
+                getConnect: {
+                    get: function () {
+                        return this.canConnect ? 'Yes' : 'No'
+                    },
+                    set: function (newVal) {
+                        this.canConnect = newValue;
+                    }
+                }
+            },
+            filters: {
+                convertDrink: function (value) {
+                    return value + '!';
+                }
+            },
+            methods: {
+                buyDrink: function (drink) {
+                    this.shoppingCart.items.push(drink);
+                },
+                removeDrink: function (drink) {
+                    this.shoppingCart.items.splice(
+                        this.shoppingCart.items.indexOf(drink), 1
+                    );
+                },
+                updateURL: function () {
+                    var growler = this;
+                    axios.get(growler.testUrl)
+                        .then(function (response) {
+                            growler.canConnect = true;
+                        })
+                        .catch(function (response) {
+                            growler.canConnect = false;
+                        });
+                }
+            },
+            created: function () {
+                this.updateURL();
+            }
+        });
+    </script>
+</body>
+</html>

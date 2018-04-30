@@ -58,11 +58,6 @@
         src="https://unpkg.com/vue"
     ></script>
 
-    <script
-        type="text/javascript"
-        src="https://unpkg.com/axios/dist/axios.min.js"
-    ></script>
-
     <script>
         // life cycle of a view: creation (compiled here) -> mounting (creates virtual DOM) -> updating -> destroy (each stage has a before and after hook)
         // NOTE: virtual DOM is updated in batches
@@ -93,6 +88,25 @@
 
         // NOTE: when modifying an array item, you MUST use the Vue.set(<array>, <index>, <new-val>) set function. You can use it like so:
         //  Vue.set(this.array, 3, 'This is the new val')
+
+        // NOTE: the computed method only executes during interpolation</b >
+
+
+        // Filters, Computed properties, and watchers:
+        //  1) watch -> watches for changes on a data item
+        //      NOTE: Vue doesn't keep data copies for Objects and Arrays
+
+        //      NOTE: when specifying a watcher for an object... you should probably specify "deep: true". This will
+        //       tell Vue detect changes for properties nested inside of the root object.
+        //           ∙ the "deep" property is set to false by default (for performance reasons.)
+        //
+        //  2) computed -> will be automatically used when a value is interpolated (the value will be cached.)
+        //      // Use this especially if you have logic that is complex, or if it is called a lot.
+        //      // The value that is returned is CACHED until the depending value(s) change.
+        //      You can specify just a function OR you can specify accessor functions (getters and setters)
+        //
+        //  3) filters -> useful for text conversions
+        //      |-> filters CANNOT be used with the v-html or v-text directives
 
         // Directives:
         //  1) v-text="<var>" - assigns the entire content of an element to the specified data value
@@ -159,6 +173,7 @@
         //
         // NOTE you can also use v-for and v-if directives on the same element like so:
         //  
+        // NOTE: filters can be chained...
 
         var growler = new Vue({
             el: '#growler',
