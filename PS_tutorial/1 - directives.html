@@ -87,6 +87,13 @@
 
         // all baked-in Vue directives begin with "v-"... we might say something like "text directive" which is referencing "v-text"
 
+        // Modifiers describe te behaavior of a binding (to the model)
+
+        // NOTE: when using both v-if and v-for directive on the same element, the v-for has higher precedence
+
+        // NOTE: when modifying an array item, you MUST use the Vue.set(<array>, <index>, <new-val>) set function. You can use it like so:
+        //  Vue.set(this.array, 3, 'This is the new val')
+
         // Directives:
         //  1) v-text="<var>" - assigns the entire content of an element to the specified data value
         //  2) v-once - to only update the DOM once (even if the view has children, they will only be rendered once as well)
@@ -103,7 +110,7 @@
         //          |-> this will only update the UI when the element looses focus
         //      |-> you can chain modifiers like so: v-model.lazy.trim="<var>"
         //          |-> the order does NOT matter (this may change?)
-        //  6) v-on:<event>="<function>[(param1, param2, ... , param_n, $event)]" - empowers you to attach to events
+        //  6) v-on:<event>="<function>[(param1, param2, ... , param_n, $event)]" - empowers you to attach to events (listens for event in the HTML DOM)
         //      |-> the <event> accepts the same keywords as JS's baked in addEventListener function ("click", "hover", etc.)
         //      |-> we could have used the SHORTCUT @<event>="<function>[(param1, param2, ... , param_n, $event)]"
         //      |-> some modifiers for v-on:<event> are 
@@ -121,6 +128,37 @@
         //
         //      |-> for mouse events use: v-on:(mousedown|mouseup).(left|right|middle)="<function>"
         //          // you can prevent a context menu with something like: v-on:contextmenu.prevent="<function>"
+        //
+        //  7) v-cloak - This directive hides elements until a view is compiled
+        //      |-> you will need to add the css: [v-cloak] { display: none; }
+        //
+        //  8) v-if="<condition>", v-else-if="<condition>", v-else - lets you conditionally render content based on an expression
+        //      |-> better for complex logic
+        //      |-> conditionally renders
+        //      |-> high toggling costs at runtime
+        //
+        //  9) v-show="<if condition>" - similar to the v-if directive (better for simple logic)
+        //      |-> better for basic logic
+        //      |-> ALWAYS renders the element
+        //      |-> lower toggling costs at runtime
+        //      ------------------------------------
+        //      |-> Sets the CSS display property
+        //      |-> Show or hides an HTML block
+        //
+        //  10) v-for="<data-alias> (in|of) <source-data>" - allows for looping, you can loop via:
+        //      i) through a list
+        //      ii) through an object
+        //      iii) or loop a specific number of times
+        //      
+        //      ∙ to look through an object, you could use something like: <li v-for="(item, key, index) in drinks></li>"
+        //          i) item - the actual value of drinks['key']
+        //          ii) key - the object key
+        //          iii) index - zero based
+        //
+        //      Vue gets the list of keys via JavaScript's Object.keys() function
+        //
+        // NOTE you can also use v-for and v-if directives on the same element like so:
+        //  
 
         var growler = new Vue({
             el: '#growler',

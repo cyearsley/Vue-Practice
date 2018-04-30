@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>cond. list rendering - Growler</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+
+    <div id="growler">
+        <div v-cloak>
+            Current Drinks: {{ drinksArray }} <br>
+            <button v-on:click="getRandomArr">Get new drinks</button><br>
+            <button v-on:click="getRandomArr(0, $event)">Get 0 drinks</button><br>
+            <button v-on:click="getRandomArr(1, $event)">Get 1 drink</button>
+            <br><br>
+
+            <div v-if="drinksArray.length === 0">
+                WUUUT... No drinks were returned!
+            </div>
+            <div v-else-if="drinksArray.length === 1">
+                Only one drink was returned...
+            </div>
+            <div v-else>
+                {{ drinksArray.length }} drink were returned!
+            </div>
+            <br><br>
+
+            <h2>The <b>show</b> directive is used here:</h2>
+            <div v-show="drinksArray.length === 0">
+                No drinks were queried!
+            </div>
+            <div v-show="drinksArray.length > 0">
+                There are {{ drinksArray.length }} drink(s)!
+            </div><br>
+
+            <h2>Iterating through an array</h2>
+            Drink list: <br>
+            <div style="min-height: 350px;">
+                <ul>
+                    <li v-for="drink in drinksArray">
+                        {{ drink }}
+                    </li>
+                    <br><b v-show="drinksArray.length > 0">OR</b><br>
+                    <br>
+                    <li v-for="(drink, index) in drinksArray">
+                        {{ index + 1}}) {{ drink }}
+                    </li>
+                </ul>
+            </div><br>
+
+            <h2>Iterating through an array with both a v-for and a v-if on the same element</h2>
+            Drink list (With no Milk, Lemonade, or Juice) <br>
+            <div style="min-height: 100px;">
+                <ol>
+                    <li
+                        v-for="drink in drinksArray"
+                        v-if="drink !== 'Milk' && drink !== 'Lemonade' && drink !== 'Juice'"
+                    >{{ drink }}</li>
+                </ol>
+            </div><br>
+
+            <h2>Iterating through an object</h2>
+            <ul>
+                <li v-for="(value, key, index) in drinkObj">
+                    {{ index + 1 }}) <b>{{ key }}</b>: {{ value }}
+                </li>
+            </ul><br>
+
+            <h2>Iterating a specific number of times:</h2>
+            <span v-for="page in 10">
+                {{ page }}
+            </span>
+            <br><i style="font-size: 0.75em;">page - a numerical alias - will always start at one.</i>
+            <br><i style="font-size: 0.75em;">NOTE: instead of using the delimter <b>in</b>, you can also use <b>of</b></i>
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="https://unpkg.com/vue"></script>
+    
+    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        var growler = new Vue({
+            el: '#growler',
+            data: {
+                arrLength5: ['Lemonade', 'Water', 'Tea', 'Coffee', 'Juice', 'Beer', 'Wine', 'Milk', 'Soda'],
+                drinksArray: ['Tea'],
+                drinkObj: {
+                    favoriteDrink: 'Tea',
+                    leastFavoriteDrink: 'Lemonade',
+                    name: 'Foobar',
+                    age: 1234
+                }
+            },
+            methods: {
+                getRandomArr: function (drinkNumber, event) {
+
+                    
+                    // we will want to create a temp arr instead of pushing to the data model's data item
+                    //  ... we don't want to update everytime time we push to the data item...
+                    //      |-> this may or may not happen, because Vue will update items in batches
+                    var tempArr = [];
+                    drinkNumber = drinkNumber === 0 || drinkNumber === 1 ? drinkNumber : Math.floor(Math.random() * 11);
+                    for (var i = 0; i < drinkNumber; i += 1) {
+                        tempArr.push(this.arrLength5[Math.floor(Math.random() * 10) % this.arrLength5.length]);
+                    }
+                    this.drinksArray = tempArr.reduce(function (acc, item) {
+                        if (acc.indexOf(item) === -1) {
+                            acc.push(item);
+                        }
+                        return acc;
+                    }, []);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

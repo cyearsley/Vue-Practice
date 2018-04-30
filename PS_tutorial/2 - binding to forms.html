@@ -20,6 +20,10 @@
         .accent-color {
             color: #FF6A00;
         }
+
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -64,7 +68,13 @@
         <br>
         Icon: <i v-bind:class="favIcon" aria-hidden="true"></i>
         <br>
-        Selected Item: {{ favIcon }} 
+        Selected Item: <span>{{ favIcon }}</span>
+        <br><br>
+
+        Online Status: (<span v-bind:style="{ color: isOnline=='online' ? 'green' : 'red', fontWeight: 'bold' }">Status</span>)
+        <br>
+        <span style="color: green;">Online</span> - <input type="radio" value="online" v-model="isOnline"><br>
+        <span style="color: red;">Offline</span> - <input type="radio" value="offline" v-model="isOnline">
 
     </div>
 
@@ -82,7 +92,8 @@
                 displayHeaders: true,
                 classIndexes: [],
                 favColor: '',
-                favIcon: ''
+                favIcon: '',
+                isOnline: 'offline'
             }
         });
     </script>
