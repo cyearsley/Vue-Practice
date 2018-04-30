@@ -44,7 +44,7 @@
                 </li>
             </ul>
             <br><br>
-            <div style="font-size: 1.5em">Can Connect: <span v-bind:class="getConnect === 'Yes' ? 'can-connect' : 'cannot-connect'">&#9827; ({{ canConnect }})</span></div>
+            <div style="font-size: 1.5em">Can Connect: <span v-bind:class="getConnect === 'Yes' ? 'can-connect' : 'cannot-connect'">&#9827; ({{ getConnect }})</span></div>
             <input type="text" v-model="testUrl"> <span v-show="testUrl === 'http://www.ecofic.com/'"><i style="font-size: 0.75em">author of the course I am following</i></span><br><br>
             <button v-on:click="updateURL">Update URL</button><br>
             <i style="font-size: 0.75em">Notice how the value of <b>canConnect</b> isn't true or false, but <b>Yes</b> or <b>No</b></i><br>
